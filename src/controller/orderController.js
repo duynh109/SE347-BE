@@ -1,5 +1,6 @@
 import Order from "../models/order.js";
 import User from "../models/user.js";
+import Discount from "../models/discount.js";
 import {
   getStorage,
   ref,
@@ -155,3 +156,18 @@ export const deleteOrder = async (req, res) => {
     res.status(500).send(e);
   }
 };
+
+export const discount = async (req,res) => {
+  try {
+    const {code, total} = req.body
+    const isValidCode = await Discount.findOne({code});
+    if(!isValidCode || isValidCode.isUsed)
+      return res.status(404).send("Invalid code");
+
+    isValidCode.isUsed = true
+    await isValidCode.save();
+    return res.status(200).json({result: total * isValidCode.value});
+  } catch (error) {
+    return res.status(500).send(error);
+  }
+}

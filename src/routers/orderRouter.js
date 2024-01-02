@@ -13,5 +13,6 @@ router
   .get('/order/hd/:mahd', orderController.getOrderByMahd)
   .post('/order', orderController.addOrder)
   .put('/order/:id', upload.single('hinhanh'), orderController.updateOrder)
-  .delete('/order/:id', orderController.deleteOrder);
+  .delete('/order/:id', orderController.deleteOrder)
+  .post('/order/discount', orderController.discount)
 export default router;
