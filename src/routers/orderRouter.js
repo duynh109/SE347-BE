@@ -7,6 +7,7 @@ import multer from 'multer';
 const upload = multer({ storage: multer.memoryStorage() });
 router
   .get('/order', orderController.getAllOrder)
+  .get('/orderAllUserAll/search', orderController.searchOrder)
   .get('/order/:id', orderController.getOrderById)
   .get('/order/kh/:ten', orderController.getOrderByKH)
   .get('/order/tinhtrang/:tinhtrang', orderController.getOrderByStatus)

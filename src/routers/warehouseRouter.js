@@ -4,6 +4,7 @@ import * as warehouseController from '../controller/warehouseController.js'
 
 router
     .get("/warehouse", warehouseController.getAllTonKho)
+    .get("/warehouse/search", warehouseController.searchProductByName )
     .get("/warehouse/:id", warehouseController.getTonKhoById)
     .get("/warehouse/thang/:thang", warehouseController.getTonKhoByThang)
     .post("/warehouse", warehouseController.addTonKho)

@@ -73,3 +73,25 @@ export const deleteTonKho = async(req, res) => {
         return res.status(400).json({ error: error.message });
       }
 }
+
+export const searchProductByName = async (req, res) => {
+  try {
+    const productName = req.query.query; // tên sản phẩm được truyền qua query parameter
+
+    if (!productName) {
+      return res.status(400).json({ error: 'Product name is required' });
+    }
+
+    // Sử dụng RegExp để tìm kiếm không phân biệt hoa thường
+    const regex = new RegExp(productName, 'i');
+
+    // Tìm kiếm sản phẩm dựa vào tên sản phẩm (giả định tên sản phẩm lưu trong trường 'tenSP')
+    const productsFound = await Warehouse.find({ tenSP: regex });
+
+    res.status(200).send(Array.from(productsFound));
+  } catch (error) {
+    // Xử lý lỗi nếu có
+    console.error('Error searching products:', error);
+    res.status(500).send({ error: error.message });
+  }
+}

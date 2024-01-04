@@ -157,17 +157,58 @@ export const deleteOrder = async (req, res) => {
   }
 };
 
-export const discount = async (req,res) => {
+export const discount = async (req, res) => {
   try {
-    const {code, total} = req.body
-    const isValidCode = await Discount.findOne({code});
-    if(!isValidCode || isValidCode.isUsed)
+    const { code, total } = req.body;
+    const isValidCode = await Discount.findOne({ code });
+    if (!isValidCode || isValidCode.isUsed)
       return res.status(404).send("Invalid code");
 
-    isValidCode.isUsed = true
+    isValidCode.isUsed = true;
     await isValidCode.save();
-    return res.status(200).json({result: total * isValidCode.value});
+    return res.status(200).json({ result: total * isValidCode.value });
   } catch (error) {
     return res.status(500).send(error);
   }
-}
+};
+
+export const searchOrder = async (req, res) => {
+    const query = req.query.query; // Từ khóa tìm kiếm được truyền qua query parameter
+
+    if (!query) {
+      return res.status(400).json({ error: "Query parameter is required" });
+    }
+
+    // Chuyển đổi giá trị query thành một số
+    const parsedQuery = parseFloat(query);
+
+    // Kiểm tra xem query có phải là một số hợp lệ hay không
+    const isNumber = !isNaN(parsedQuery) && isFinite(query);
+
+    const searchCondition = {
+      $or: [
+        { mahd: { $regex: query, $options: "i" } }, // Tìm kiếm theo mã hoá đơn (không phân biệt hoa thường)
+        { ngaylap: { $regex: query, $options: "i" } }, // Tìm kiếm theo ngày lập (không phân biệt hoa thường)
+        { tinhtrang: { $regex: query, $options: "i" } }, // Tìm kiếm theo tình trạng hoá đơn (không phân biệt hoa thường)
+      ],
+    };
+
+    // Nếu query là một số hợp lệ, thêm điều kiện tìm kiếm theo price hoặc quality
+    if (isNumber) {
+      searchCondition.$or.push({ tongtien: parsedQuery });
+    }
+
+    // Tìm kiếm hoá đơn dựa trên các trường mahd, ngaylap, tongtien, và tinhtrang
+    Order.find(searchCondition, (err, orders) => {
+      if (err) {
+        console.error(err);
+        res.status(500).send("Internal Server Error");
+      } else if (orders.length === 0) {
+        res.status(404).send("No products found");
+      } else {
+        res.json(orders);
+      }
+    });
+    // const ordersArray = Array.isArray(orders) ? orders : [orders];
+    // res.status(200).send({ orders });
+};
