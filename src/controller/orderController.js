@@ -212,3 +212,19 @@ export const searchOrder = async (req, res) => {
     // const ordersArray = Array.isArray(orders) ? orders : [orders];
     // res.status(200).send({ orders });
 };
+
+export const showDiscounts = async (req,res) => {
+  const discounts = await Discount.find({})
+  return res.json(discounts);
+}
+
+export const createDiscounts =async (req,res) => {
+  const {code, value} = req.body
+  const isExists = await Discount.findOne({code});
+  if(isExists){
+    return res.status(403).send("Code is already exists")
+  }
+  const discont = new Discount({code, value})
+  await discont.save();
+  return res.status(201).send("Created")
+}
