@@ -5,7 +5,7 @@ const productSchema = new mongoose.Schema({
   name: { type: String, require: true },
   image: { type: String, required: true },
   price: { type: Number, required: true },
-  category: { type: String, enum: ["Nhẫn", "Dây chuyền", "Bông tai"] },
+  category: { type: String, enum: ["Nhẫn", "Dây chuyền", "Bông tai", "Combo"] },
   // details: {
   //   type: Map,
   //   of: String,
@@ -20,7 +20,7 @@ const productSchema = new mongoose.Schema({
     type: String,
     require: true,
   },
-   quantity: {
+  quantity: {
     type: Number,
     require: true,
   },
