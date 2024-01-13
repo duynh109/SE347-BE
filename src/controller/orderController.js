@@ -8,6 +8,7 @@ import {
   getDownloadURL,
   deleteObject,
 } from "firebase/storage";
+import { Types } from "mongoose";
 
 export const getAllOrder = async (req, res) => {
   try {
@@ -227,4 +228,22 @@ export const createDiscounts =async (req,res) => {
   const discont = new Discount({code, value})
   await discont.save();
   return res.status(201).send("Created")
+}
+
+export const deleteDiscountById = async (req,res) =>{
+  const {id} = req.params
+  if(!Types.ObjectId.isValid(id)) return res.status(403).send("Invalid objectId");
+  const result = await Discount.findByIdAndDelete(id);
+  if(result) return res.status(200).send(result);
+  return res.status(404).send("Discount not found")
+}
+
+export const patchDiscount = async (req,res) => {
+  const {id} = req.params
+  if(!Types.ObjectId.isValid(id)) return res.status(403).send("Invalid objectId");
+  const discount = await Discount.findById(id);
+  if(!discount) return res.status(404).send("Discount not found")
+  discount.isUsed = false;
+  const result = await discount.save();
+  return res.status(200).send(result);
 }

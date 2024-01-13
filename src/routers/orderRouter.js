@@ -18,6 +18,8 @@ router
   .post('/order/discount', orderController.discount)
   .get('/order/discount/get', orderController.showDiscounts)
   .post('/order/discount/add', orderController.createDiscounts)
+  .delete('/order/discount/delete/:id', orderController.deleteDiscountById)
+  .patch('/order/discount/:id', orderController.patchDiscount)
 
 
 export default router;
